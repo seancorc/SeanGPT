@@ -11,7 +11,12 @@ export default function SeanGPTLayout() {
   const [personalInfo, setPersonalInfo] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isChatStarted, setIsChatStarted] = useState(false)
-  const { messages, input, handleInputChange, handleSubmit: handleChatSubmit } = useChat()
+  const { messages, input, handleInputChange, handleSubmit: handleChatSubmit } = useChat({
+    api: '/api/chat',
+    body: {
+      personalInfo,
+    },
+  })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

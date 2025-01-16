@@ -9,18 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "ai": "^4.0.38",
+    "ai": "^2.2.35",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^11.18.0",
     "lucide-react": "^0.471.1",
     "next": "14.2.16",
+    "openai": "^4.78.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-markdown": "^9.0.3",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

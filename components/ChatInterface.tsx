@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { ArrowRight, Copy, Check } from 'lucide-react'
 import { Message } from 'ai'
 import { motion } from 'framer-motion'
+import ReactMarkdown from 'react-markdown'
 
 interface ChatInterfaceProps {
   messages: Message[]
@@ -27,16 +28,6 @@ export default function ChatInterface({ messages, input, handleInputChange, hand
     })
   }
 
-  // Hardcoded response
-  const hardcodedResponse: Message = {
-    id: 'hardcoded-response',
-    role: 'assistant',
-    content: "Great question! As an AI fitness assistant, I'd be happy to help. Based on your goal of improving overall fitness, I recommend a balanced approach that includes both cardiovascular exercise and strength training. Here's a simple weekly plan to get you started:\n\n1. Cardio: Aim for 150 minutes of moderate-intensity cardio per week. This could be 30 minutes, 5 days a week of activities like brisk walking, cycling, or swimming.\n\n2. Strength Training: Include 2-3 strength training sessions per week, focusing on major muscle groups. Start with bodyweight exercises like push-ups, squats, and lunges, then progress to using weights as you get stronger.\n\n3. Flexibility: Don't forget to stretch! Include 5-10 minutes of stretching after each workout to improve flexibility and reduce the risk of injury.\n\n4. Rest: Allow for 1-2 rest days per week to give your body time to recover and prevent burnout.\n\nRemember to start slowly and gradually increase the intensity and duration of your workouts. It's also crucial to maintain a balanced diet to support your fitness goals. If you have any specific health concerns or conditions, please consult with a healthcare professional before starting a new exercise regimen.\n\nDo you have any questions about this plan or would you like more details on any specific aspect?"
-  }
-
-  // Add hardcoded response to messages
-  const allMessages = [...messages, hardcodedResponse]
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -46,14 +37,14 @@ export default function ChatInterface({ messages, input, handleInputChange, hand
       <div className="h-full flex flex-col max-w-3xl mx-auto">
         <div className="flex-1 overflow-y-auto px-4">
           <div className="space-y-4 pb-4">
-            {allMessages.map((message) => (
+            {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${
                   message.role === 'user' ? 'justify-end' : 'justify-start'
                 } w-full`}
               >
-                <div className="relative group">
+                <div className="relative group max-w-2xl ">
                   <div
                     className={`p-4 rounded-lg inline-block ${
                       message.role === 'user' 
@@ -61,11 +52,15 @@ export default function ChatInterface({ messages, input, handleInputChange, hand
                         : 'bg-gray-100'
                     }`}
                   >
-                    <p className="text-gray-900">{message.content}</p>
+                    <div className="prose prose-sm max-w-none text-gray-900">
+                      {message.role == 'user' ? message.content : <ReactMarkdown>{message.content}</ReactMarkdown>}
+                    </div>
                   </div>
                   <button
                     onClick={() => copyToClipboard(message.content, message.id)}
-                    className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`absolute -bottom-8 transform p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 z-10 ${
+                      message.role === 'user' ? 'right-1 translate-x-1/2' : 'left-1 -translate-x-1/2'
+                    }`}
                     aria-label="Copy message"
                   >
                     {copiedMessageId === message.id ? (
