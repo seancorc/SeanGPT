@@ -1,27 +1,70 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #ffffff;
+  color: #1a202c;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+.bg-gradient-to-r {
+  background-size: 200% auto;
+  animation: shine 5s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
   }
 }
+
+::placeholder {
+  color: #a0aec0;
+}
+
+textarea, input[type="text"] {
+  font-size: 16px;
+}
+
+@media (min-width: 768px) {
+  textarea, input[type="text"] {
+    font-size: 14px;
+  }
+}
+
+:root {
+  --chat-center-x: 50%;
+  --chat-center-y: 50%;
+}
+
+.chat-animation-enter {
+  position: fixed;
+  top: var(--chat-center-y);
+  left: var(--chat-center-x);
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0;
+  transition: all 0.5s ease-out;
+}
+
+.chat-animation-enter-active {
+  transform: translate(0, 0) scale(1);
+  opacity: 1;
+}
+
+.chat-animation-exit {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(0, 0) scale(1);
+  opacity: 1;
+  transition: all 0.5s ease-in;
+}
+
+.chat-animation-exit-active {
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0;
+}
+
