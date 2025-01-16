@@ -12,6 +12,15 @@ export const runtime = 'edge';
 
 export async function POST(req: Request) {
   const { messages, personalInfo } = await req.json();
+  console.log(messages);
+  if (messages.content === "test") {
+    return new StreamingTextResponse(new ReadableStream({
+      start(controller) {
+        controller.enqueue("Hello, world!");
+        controller.close();
+      }
+    }));
+  }
 
   // Create the system message with Sean's fitness knowledge
   const systemMessage = {

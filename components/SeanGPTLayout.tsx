@@ -72,17 +72,12 @@ export default function SeanGPTLayout() {
               TL;DR I put 10+ years of fitness knowledge into an LLM for you to chat with 🤩 Interested in creating your own GPT for your niche expertise? <a href="mailto:seancorcoran45@gmail.com" className="text-blue-600 hover:underline">Hit me up</a> :)
             </motion.h2>
 
-            <div className="space-y-6 text-gray-600 mb-12">
+            <div className="space-y-6 text-gray-600 mb-8">
               <p className="leading-relaxed">
                 This is an experiential project built by <a href="https://www.seancorc.com/" target="_blank" className="text-blue-600 hover:underline">Sean</a>, 
                 with the goal of helping people learn from others' expertise and share their expertise. 
                 I've invested hours giving this LLM 10+ years worth of knowledge in endurance training, lifting, & nutrition. 
                 If you'd like your own GPT for your special expertise, please reach out <a href="mailto:seancorcoran45@gmail.com" className="text-blue-600 hover:underline">here</a>. Everyone's an expert in something! Share it with the world :)
-              </p>
-              <p className="leading-relaxed">
-                Why value any of my knowledge on fitness: I've completed an Ironman (140.6), 10+ marathons (fastest avg. pace of 6:54), 
-                & a 50 mile ultramarathon all while benching over 315. If you don't think that expertise will help you, nudge whoever 
-                does have the knowledge you need to reach out to me & I can make them their own GPT! (email: <a href="mailto:seancorcoran45@gmail.com" className="text-blue-600 hover:underline">seancorcoran45@gmail.com</a>)
               </p>
             </div>
 
@@ -117,6 +112,25 @@ export default function SeanGPTLayout() {
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </form>
+            </div>
+
+            <div className="space-y-6 text-gray-600 mb-12">
+            <motion.h2 
+              className="text-lg md:text-2xl font-semibold mb-8 text-gray-700 text-center"
+            >
+              Some Fair Questions:
+            </motion.h2>
+              <p className="leading-relaxed">
+                <i>How is this any different than ChatGPT?</i> Imagine the person that if you had as a personal mentor, could be pivotal to your advancement in some way (health, career, etc.). 
+                This could be a coach, celeberity, whoever. The odds you are able to get that person as a mentor are pretty low - but if this person had their own GPT that they dumped all their niche, 
+                special expertise into & that GPT was a genuinely good proxy for that person (at least in certain domains) - that’d be a whole lot better than nothing at least right? Idk, we’ll see lol but that’s my thesis
+              </p>
+              <p className="leading-relaxed">
+                <i>Why value any of my knowledge on fitness?</i> I've run 10+ marathons with a fastest avg. pace of 6:54, completed Ironman Arizona (140.6 miles), 
+                finished a 50 mile ultramarathon, my fastest 5k is 17:35 (5:35 min/mile), and I bench over 315 lbs. My annual bloodwork shows good overall health as well. 
+                 If you don't think my expertise will help you, nudge whoever does have the knowledge you need to reach out 
+                 to me & I can make them their own GPT! (email: <a href="mailto:seancorcoran45@gmail.com" className="text-blue-600 hover:underline">seancorcoran45@gmail.com</a>)
+              </p>
             </div>
           </motion.div>
         )}
