@@ -72,11 +72,15 @@ export default function SeanGPTLayout() {
               TL;DR I put 10+ years of fitness knowledge into an LLM for you to chat with 🤩 Interested in creating your own GPT for your niche expertise? <a href="mailto:seancorcoran45@gmail.com" className="text-blue-600 hover:underline">Hit me up</a> :)
             </motion.h2>
 
+            <p className="leading-relaxed text-center">
+                *<i>This is in development & I've barely put any of my knowledge into it so it's quite literally a ChatGPT wrapper atm.</i>*
+              </p>
+
             <div className="space-y-6 text-gray-600 mb-8">
               <p className="leading-relaxed">
                 This is an experiential project built by <a href="https://www.seancorc.com/" target="_blank" className="text-blue-600 hover:underline">Sean</a>, 
                 with the goal of helping people learn from others' expertise and share their expertise. 
-                I've invested hours giving this LLM 10+ years worth of knowledge in endurance training, lifting, & nutrition. 
+                I've invested hours (this is a lie I haven't done this yet) giving this LLM 10+ years worth of knowledge in endurance training, lifting, & nutrition. 
                 If you'd like your own GPT for your special expertise, please reach out <a href="mailto:seancorcoran45@gmail.com" className="text-blue-600 hover:underline">here</a>. Everyone's an expert in something! Share it with the world :)
               </p>
             </div>

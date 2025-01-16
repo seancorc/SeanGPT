@@ -3,7 +3,7 @@ import SeanGPTLayout from '../components/SeanGPTLayout'
 
 export const metadata: Metadata = {
   title: 'SeanGPT',
-  description: 'Your personal fitness AI assistant',
+  description: 'Sean but AI',
 }
 
 export default function Home() {
