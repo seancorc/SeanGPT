@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { integer, sqliteTable, text, index } from 'drizzle-orm/sqlite-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { content } from './content';
 import { customType } from "drizzle-orm/sqlite-core";
@@ -28,19 +28,6 @@ export const embeddings = sqliteTable('embeddings', {
   embedding: float32Array("embedding", { dimensions: 1536 }).notNull(), // see: https://docs.turso.tech/sdk/ts/orm/drizzle
   chunk: text('chunk').notNull()
 });
-
-async function createVectorIndex() { // this needs to run after the embeddings table is created... right now just running db:push twice lol
-    try {
-      await db.run(sql`
-        CREATE INDEX IF NOT EXISTS vector_idx ON embeddings(libsql_vector_idx(embedding))
-      `);
-      console.log('Vector index created successfully');
-    } catch (error) {
-      console.error('Error creating vector index:', error);
-      throw error;
-    }
-  }
-  createVectorIndex();
 
 export const insertEmbeddingSchema = createInsertSchema(embeddings);
 export const selectEmbeddingSchema = createSelectSchema(embeddings);
