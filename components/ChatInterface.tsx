@@ -55,6 +55,11 @@ export default function ChatInterface({ messages, input, handleInputChange, hand
                     <div className="prose prose-sm max-w-none text-gray-900">
                       {message.role == 'user' ? message.content : <ReactMarkdown>{message.content}</ReactMarkdown>}
                     </div>
+                    {message?.toolInvocations?.[0] && (
+                      <span className="italic font-light">
+                        {'calling tool: ' + message?.toolInvocations?.[0].toolName}
+                      </span>
+                    )}
                   </div>
                   <button
                     onClick={() => copyToClipboard(message.content, message.id)}

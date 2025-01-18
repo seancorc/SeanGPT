@@ -1,46 +1,33 @@
-import { OpenAI } from 'openai';
-import { StreamingTextResponse, OpenAIStream } from 'ai';
-import { SEAN_FITNESS_KNOWLEDGE, OPENAI_CONFIG } from '@/lib/config';
-
-// Create an OpenAI API client (that's edge friendly!)
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-// IMPORTANT! Set the runtime to edge
-export const runtime = 'edge';
+import { openai } from '@ai-sdk/openai';
+import { streamText, tool } from 'ai';
+import { INITIAL_MESSAGE } from '@/lib/config';
+import { findRelevantContent } from '@/lib/ai/embeddings';
+import { z } from 'zod';
 
 export async function POST(req: Request) {
   const { messages, personalInfo } = await req.json();
-  console.log(messages);
-  if (messages.content === "test") {
-    return new StreamingTextResponse(new ReadableStream({
-      start(controller) {
-        controller.enqueue("Hello, world!");
-        controller.close();
-      }
-    }));
-  }
-
-  // Create the system message with Sean's fitness knowledge
-  const systemMessage = {
-    role: "system",
-    content: `${SEAN_FITNESS_KNOWLEDGE}${personalInfo ? `\n\nUser Context:\n${personalInfo}` : ''}`
-  };
-
-  // Add the system message to the beginning of the messages array
-  const augmentedMessages = [systemMessage, ...messages];
-
-  // Ask OpenAI for a streaming chat completion
-  const response = await openai.chat.completions.create({
-    ...OPENAI_CONFIG,
-    messages: augmentedMessages as any,
-    stream: true,
+  const result = streamText({
+    model: openai('gpt-4o'),
+    messages,
+    system: `${INITIAL_MESSAGE}${personalInfo ? `\n\nUser Context:\n${personalInfo}` : ''}`,
+    //temperature: 0.4,
+    maxTokens: 1000,
+    tools: {      
+      getInformation: tool({
+      description: `get information from your knowledge base to answer questions. Call this tool when the user asks a question.`,
+      parameters: z.object({
+        question: z.string().describe('the users question'),
+      }),
+        execute: async ({ question }) => {
+          const relevantContent = await findRelevantContent(question);
+          if (!relevantContent)
+            return 'No relevant content found. Say you don\'t have access to that information.';
+          
+          return relevantContent.map(item => item.chunk).join('\n\n');
+        },
+      }),
+    },
   });
+  return result.toDataStreamResponse();
+}
 
-  // Create a stream of the response
-  const stream = OpenAIStream(response as any);
-
-  // Return a StreamingTextResponse, which can be consumed by the client
-  return new StreamingTextResponse(stream);
-} 
