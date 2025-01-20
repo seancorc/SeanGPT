@@ -22,6 +22,7 @@ export async function POST(req: Request) {
           if (!relevantContent)
             return 'No relevant content found. Say you don\'t have access to that information.';
           
+          // TODO: have each chunk be # Title \n prechunk[-400:] \n chunk \n postchunk[:400]
           const content = relevantContent.map(item => item.chunk).join('\n\n');
           console.log('content:', content);
           return content;

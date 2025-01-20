@@ -25,7 +25,7 @@ const float32Array = customType<{
 export const embeddings = sqliteTable('embeddings', {
   id: integer('id').primaryKey(),
   contentId: integer('content_id').references(() => content.id),
-  embedding: float32Array("embedding", { dimensions: 1536 }).notNull(), // see: https://docs.turso.tech/sdk/ts/orm/drizzle
+  embedding: float32Array("embedding", { dimensions: 3072 }).notNull(), // see: https://docs.turso.tech/sdk/ts/orm/drizzle
   chunk: text('chunk').notNull()
 });
 
