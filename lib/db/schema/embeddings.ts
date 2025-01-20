@@ -26,7 +26,11 @@ export const embeddings = sqliteTable('embeddings', {
   id: integer('id').primaryKey(),
   contentId: integer('content_id').references(() => content.id),
   embedding: float32Array("embedding", { dimensions: 3072 }).notNull(), // see: https://docs.turso.tech/sdk/ts/orm/drizzle
-  chunk: text('chunk').notNull()
+  chunkText: text('chunk_text').notNull(),
+  title: text('title').notNull(),
+  url: text('url').notNull(),
+  preChunk: text('pre_chunk'),
+  postChunk: text('post_chunk')
 });
 
 export const insertEmbeddingSchema = createInsertSchema(embeddings);

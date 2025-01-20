@@ -1,7 +1,7 @@
 import { openai } from '@ai-sdk/openai';
 import { InvalidToolArgumentsError, NoSuchToolError, streamText, tool, ToolExecutionError } from 'ai';
 import { INITIAL_MESSAGE } from '@/lib/config';
-import { findRelevantContent } from '@/lib/ai/embeddings';
+import { findRelevantContent } from '@/lib/ai/embeddings_utils';
 import { z } from 'zod';
 
 export async function POST(req: Request) {
@@ -13,19 +13,23 @@ export async function POST(req: Request) {
     maxTokens: 1000,
     tools: {      
       getInformation: tool({
-      description: `get information from your knowledge base to answer questions. Call this tool when the user asks a question.`,
+      description: `Get information from your knowledge base to answer questions. Call this tool when the user asks a question.`,
       parameters: z.object({
         question: z.string().describe('the users question'),
       }),
         execute: async ({ question }) => {
           const relevantContent = await findRelevantContent(question);
           if (!relevantContent)
-            return 'No relevant content found. Say you don\'t have access to that information.';
+            return 'No relevant information found.';
           
-          // TODO: have each chunk be # Title \n prechunk[-400:] \n chunk \n postchunk[:400]
-          const content = relevantContent.map(item => item.chunk).join('\n\n');
-          console.log('content:', content);
-          return content;
+          const formattedContent = relevantContent.map(item => `# ${item.title}
+            // TODO: Find a better way to insert the right sized prechunk & postchunk content
+            // Put the references as part of the response
+            ${item.preChunk ? `${item.preChunk.slice(-100)}\n` : ''}${item.chunkText}${item.postChunk ? `\n${item.postChunk.slice(0, 100)}` : ''}
+            Source: ${item.url}`).join('\n\n---\n\n');
+          
+          console.log('formattedContent:', formattedContent);
+          return formattedContent;
         },
       }),
     },
