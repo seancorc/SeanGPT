@@ -33,7 +33,6 @@ export async function POST(req: Request) {
             Source: ${chunk.url}`;
           }).join('\n\n---\n\n');
           
-          console.log('formattedContent:', formattedContent);
           return formattedContent;
         },
       }),

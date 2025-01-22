@@ -1,7 +1,7 @@
 import { cosineSimilarity, embed, embedMany } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { db } from '../db';
-import { sql } from 'drizzle-orm';
+import { cosineDistance, desc, gt, sql } from 'drizzle-orm';
 import { embeddings as embeddingsTable } from '../db/schema/embeddings';
 import { split } from 'sentence-splitter';
 
@@ -168,21 +168,23 @@ export const generateEmbedding = async (value: string): Promise<number[]> => {
 export const findRelevantContent = async (userQuery: string) => {
   const userQueryEmbedded = await generateEmbedding(userQuery);
   try {
-    const topK = await db
-      .select({ // from https://docs.turso.tech/sdk/ts/orm/drizzle
-        id: sql`embeddings.id`,
-        distance: sql<number>`vector_distance_cos(${embeddingsTable.embedding}, vector32(${JSON.stringify(userQueryEmbedded)}))`,
+    const similarity = sql<number>`1 - (${cosineDistance(embeddingsTable.embedding, userQueryEmbedded)})`;
+    const relevantContent = await db
+      .select({
+        id: embeddingsTable.id,
+        similarity,
         chunkText: embeddingsTable.chunkText,
         title: embeddingsTable.title,
         url: embeddingsTable.url,
         preChunk: embeddingsTable.preChunk,
         postChunk: embeddingsTable.postChunk
       })
-      .from(
-        sql`vector_top_k('vector_idx', vector32(${JSON.stringify(userQueryEmbedded)}), 4)`,
-      )
-      .leftJoin(embeddingsTable, sql`${embeddingsTable}.id = vector_top_k.id`);
-    return topK;
+      .from(embeddingsTable)
+      .where(gt(similarity, 0.2))
+      .orderBy((e) => desc(e.similarity))
+      .limit(4);
+      
+    return relevantContent;
   } catch (error) {
     console.error('Error performing nearest neighbor search:', error);
     return null;
