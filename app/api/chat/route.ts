@@ -6,11 +6,11 @@ import { z } from 'zod';
 import { split } from 'sentence-splitter';
 
 export async function POST(req: Request) {
-  const { messages, personalInfo } = await req.json();
+  const { messages } = await req.json();
   const result = streamText({
     model: openai('gpt-4o'),
     messages,
-    system: `${INITIAL_MESSAGE}${personalInfo ? `\n\nUser Context:\n${personalInfo}` : ''}`,
+    system: INITIAL_MESSAGE,
     maxTokens: 1000,
     tools: {      
       getInformation: tool({
