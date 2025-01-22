@@ -16,6 +16,7 @@ export default function SeanGPTLayout() {
     body: {
       personalInfo,
     },
+    maxSteps: 3,
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
