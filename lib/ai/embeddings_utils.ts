@@ -7,25 +7,6 @@ import { split } from 'sentence-splitter';
 
 
 const embeddingModel = openai.embedding('text-embedding-3-large');
-
-// function generateChunks(text: string, chunkSize: number = 100, overlapSize: number = 10): string[] {
-//     // Preprocess text
-//     const cleanedText = text.replace(/\s+/g, ' ').trim();
-//     // Tokenize text into words
-//     const tokens = cleanedText.split(' ');
-//     const chunks: string[] = [];
-//     let i = 0;
-//     while (i < tokens.length) {
-//         // Create a chunk of the specified size
-//         const chunk = tokens.slice(i, i + chunkSize).join(' ');
-//         // Add the chunk to the list
-//         chunks.push(chunk);
-//         // Move the index forward by chunkSize - overlapSize
-//         i += chunkSize - overlapSize;
-//     }
-//     return chunks;
-// }
-
   /**
    * Averages multiple embedding vectors into a single vector.
    */
