@@ -1,7 +1,7 @@
-import { generateEmbeddings } from '../lib/ai/embeddings_utils';
-import { db } from '../lib/db';
-import { content } from '../lib/db/schema/content';
-import { embeddings } from '../lib/db/schema/embeddings';
+import { generateEmbeddings } from '@/lib/ai/embeddings_utils';
+import { db } from '@/lib/db';
+import { content } from '@/lib/db/schema/content';
+import { embeddings } from '@/lib/db/schema/embeddings';
 import fetch from 'node-fetch';
 
 export async function scrapeArticle() {
@@ -50,7 +50,8 @@ async function main() {
     const [insertedContent] = await db
       .insert(content)
       .values({
-        text_data: articleContent
+        text_data: articleContent,
+        url: 'https://www.seancorc.com/writing/health-and-fitness'
       })
       .returning();
 

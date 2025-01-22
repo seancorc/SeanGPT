@@ -92,13 +92,11 @@ export async function generateEmbeddings(
     for (let i = 1; i < sentences.length; i++) {
       const sentence = sentences[i];
       const sentenceEmbedding = embeddings[i];
-
       if (currentText.length < minChars) {
-        currentText += sentence;
+        currentText += " " + sentence;
         currentEmbeddings.push(sentenceEmbedding);
         continue;
       }
-
       const currentChunkEmbedding = averageEmbeddings(currentEmbeddings);
       const similarity = cosineSimilarity(currentChunkEmbedding, sentenceEmbedding);
       const fractionOfMax = Math.min(currentText.length / maxChars, 1);
@@ -109,7 +107,8 @@ export async function generateEmbeddings(
         currentEmbeddings.push(sentenceEmbedding);
       } else {
         // Create current chunk
-        const urlFragment = encodeURIComponent(currentText.slice(0, 10));
+        const firstThreeWords = split(currentText)[0].raw.split(' ').slice(0, 3).join(' ');
+        const urlFragment = encodeURIComponent(firstThreeWords);
         const urlWithFragment = `${baseUrl}#:~:text=${urlFragment}`;
         
         const currentChunk: Chunk = {
@@ -123,15 +122,12 @@ export async function generateEmbeddings(
             preChunk: previousChunk?.chunkText,
           }
         };
-
         // Update previous chunk with this one as postChunk
         if (previousChunk) {
           previousChunk.metadata.postChunk = currentText;
         }
-
         chunks.push(currentChunk);
         previousChunk = currentChunk;
-
         // Start new chunk
         currentText = sentence;
         currentEmbeddings = [sentenceEmbedding];

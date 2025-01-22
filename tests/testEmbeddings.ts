@@ -1,6 +1,6 @@
 import { generateEmbeddings } from '@/lib/ai/embeddings_utils';
 import fs from 'fs';
-import { scrapeArticle } from '@/scripts/scrape';
+import { scrapeArticle } from '@/lib/scripts/scrape';
 
 // Function to test generateEmbeddings
 const testGenerateEmbeddings = async () => {

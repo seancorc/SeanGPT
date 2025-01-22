@@ -3,6 +3,7 @@ import { InvalidToolArgumentsError, NoSuchToolError, streamText, tool, ToolExecu
 import { INITIAL_MESSAGE } from '@/lib/config';
 import { findRelevantContent } from '@/lib/ai/embeddings_utils';
 import { z } from 'zod';
+import { split } from 'sentence-splitter';
 
 export async function POST(req: Request) {
   const { messages, personalInfo } = await req.json();
@@ -22,11 +23,15 @@ export async function POST(req: Request) {
           if (!relevantContent)
             return 'No relevant information found.';
           
-          const formattedContent = relevantContent.map(item => `# ${item.title}
-            // TODO: Find a better way to insert the right sized prechunk & postchunk content
-            // Put the references as part of the response
-            ${item.preChunk ? `${item.preChunk.slice(-100)}\n` : ''}${item.chunkText}${item.postChunk ? `\n${item.postChunk.slice(0, 100)}` : ''}
-            Source: ${item.url}`).join('\n\n---\n\n');
+          const formattedContent = relevantContent.map(chunk => {
+            const previousSentence = split(chunk.preChunk || '')
+                    .map((chunkText) => chunkText.raw.trim()).at(-1);
+            const nextSentence = split(chunk.postChunk || '')
+                    .map((chunkText) => chunkText.raw.trim()).at(0);
+            return `# ${chunk.title}
+            ${previousSentence ? `${previousSentence}\n` : ''}${chunk.chunkText}${nextSentence ? `\n${nextSentence}` : ''}
+            Source: ${chunk.url}`;
+          }).join('\n\n---\n\n');
           
           console.log('formattedContent:', formattedContent);
           return formattedContent;
