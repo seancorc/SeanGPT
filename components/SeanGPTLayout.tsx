@@ -94,10 +94,10 @@ export default function SeanGPTLayout() {
 
             <div className="space-y-6 text-gray-600 mb-12">
             <p className="leading-relaxed">
-                <i>Why?</i> To learn & because I'm curious to see how good of a proxy for me I can make this GPT. Maybe it'd be valuable for elite coaches & people that can demand a premium on their time if I can figure it out too but that is yet to be seen.
+                <i>Why?</i> To learn & because I'm curious to see how good of a proxy for me I can make this GPT (lowkey bars 🙂‍↕️). Maybe it'd be valuable for elite coaches & people that can demand a premium on their time too but that is yet to be seen.
               </p>
               <p className="leading-relaxed">
-                <i>How is this any different than ChatGPT?</i> SeanGPT has a bunch of data on me that ChatGPT doesn't & I've trained him how to talk like me. I've given SeanGPT access to a bunch of my own writing & a set of hand selected articles/content that reflect my thinking. I'm currently training it to
+                <i>How is this any different than ChatGPT?</i> In short, SeanGPT has a bunch of data & training on me that ChatGPT doesn't. I've given SeanGPT access to a bunch of my own writing & a set of hand selected articles/content that reflect my thinking. I'm currently training it to
                 talk like me. We'll see how far I can take it lol
               </p>
             </div>
