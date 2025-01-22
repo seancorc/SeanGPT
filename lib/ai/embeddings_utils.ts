@@ -66,14 +66,13 @@ interface Chunk {
  */
 export async function generateEmbeddings(
     text: string,
+    url: string,
+    title: string,
     baseSimilarityThreshold = 0.22,
     maxSimilarityThreshold = 0.28,
     maxChars = 512,
     minChars = 100
   ): Promise<Chunk[]> {
-    const title = "Health & Fitness";
-    const baseUrl = "https://www.seancorc.com/writing/health-and-fitness";
-
     const sentences = split(text)
                     .filter((item) => item.type === 'Sentence')
                     .map((item) => item.raw.trim());
@@ -109,7 +108,7 @@ export async function generateEmbeddings(
         // Create current chunk
         const firstThreeWords = split(currentText)[0].raw.split(' ').slice(0, 3).join(' ');
         const urlFragment = encodeURIComponent(firstThreeWords);
-        const urlWithFragment = `${baseUrl}#:~:text=${urlFragment}`;
+        const urlWithFragment = `${url}#:~:text=${urlFragment}`;
         
         const currentChunk: Chunk = {
           chunkText: currentText,
@@ -135,9 +134,9 @@ export async function generateEmbeddings(
     }
 
     // Handle final chunk
-    const urlFragment = encodeURIComponent(currentText.slice(0, 50));
-    const urlWithFragment = `${baseUrl}#:~:text=${urlFragment}`;
-    
+    const firstThreeWords = split(currentText)[0].raw.split(' ').slice(0, 3).join(' ');
+    const urlFragment = encodeURIComponent(firstThreeWords);
+    const urlWithFragment = `${url}#:~:text=${urlFragment}`;
     const finalChunk: Chunk = {
       chunkText: currentText,
       embedding: await generateEmbedding(currentText),

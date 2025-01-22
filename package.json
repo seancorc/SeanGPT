@@ -11,7 +11,9 @@
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:init": "tsx lib/scripts/init-db.ts"
+    "db:init": "tsx lib/scripts/init-db.ts",
+    "train:prepare": "tsx lib/scripts/prepare-training-data.ts",
+    "train:finetune": "tsx lib/scripts/fine-tune.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.1.0",
@@ -30,6 +32,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-markdown": "^9.0.3",
+    "rehype-external-links": "^3.0.0",
     "sentence-splitter": "^5.0.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7"

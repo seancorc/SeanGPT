@@ -3,6 +3,7 @@ import { ArrowRight, Copy, Check } from 'lucide-react'
 import { Message } from 'ai'
 import { motion } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
+import rehypeExternalLinks from 'rehype-external-links'
 
 interface ChatInterfaceProps {
   messages: Message[]
@@ -53,7 +54,13 @@ export default function ChatInterface({ messages, input, handleInputChange, hand
                     }`}
                   >
                     <div className="prose prose-sm max-w-none text-gray-900">
-                      {message.role == 'user' ? message.content : <ReactMarkdown>{message.content}</ReactMarkdown>}
+                      {message.role == 'user' ? message.content : (
+                        <ReactMarkdown
+                          rehypePlugins={[[rehypeExternalLinks, { target: '_blank', rel: 'noopener noreferrer' }]]}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      )}
                     </div>
                     {message?.toolInvocations?.[0] && (
                       <span className="italic font-light">

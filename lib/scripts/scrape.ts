@@ -3,65 +3,188 @@ import { db } from '@/lib/db';
 import { content } from '@/lib/db/schema/content';
 import { embeddings } from '@/lib/db/schema/embeddings';
 import fetch from 'node-fetch';
+import { eq } from 'drizzle-orm';
 
-export async function scrapeArticle() {
+interface WebpageConfig {
+  url: string;
+  startMarker: string;
+  endMarker: string;
+  metadata?: {
+    title: string;
+    author?: string;
+    category?: string;
+    [key: string]: any;
+  };
+}
+
+const ARTICLES: WebpageConfig[] = [
+  {
+    url: 'https://www.seancorc.com/writing/alcolyte-lessons',
+    startMarker: 'For context - This message was sent out',
+    endMarker: '424-634-9101',
+    metadata: {
+      title: 'Alcolyte Lessons',
+      author: 'Sean Corcoran',
+      category: 'career'
+    }
+  },
+  {
+    url: 'https://www.seancorc.com/writing/health-and-fitness',
+    startMarker: 'Health',
+    endMarker: 'figure it all out.',
+    metadata: {
+      title: 'Health and Fitness',
+      author: 'Sean Corcoran',
+      category: 'health'
+    }
+  },
+  {
+    url: 'https://blog.samaltman.com/how-to-be-successful',
+    startMarker: 'How To Be Successful',
+    endMarker: 'born incredibly lucky.',
+    metadata: {
+      title: 'How To Be Successful',
+      author: 'Sam Altman',
+      category: 'career'
+    }
+  },
+  {
+    url: 'https://markmanson.net/question',
+    startMarker: 'The Most Important Question',
+    endMarker: 'choose your struggles wisely.',
+    metadata: {
+      title: 'The Most Important Question',
+      author: 'Mark Manson',
+      category: 'philosophy'
+    }
+  },
+  {
+    url: 'https://www.paulgraham.com/wealth.html',
+    startMarker: 'If you wanted to get rich',
+    endMarker: 'and you rule the world.',
+    metadata: {
+      title: 'How to Make Wealth',
+      author: 'Paul Graham',
+      category: 'career'
+    }
+  },
+  {
+    url: 'https://www.grahamweaver.com/blog/2023-stanford-graduate-school-of-business-last-lecture',
+    startMarker: 'How to Live an Asymmetric Life',
+    endMarker: 'You came this far to move the world. Now is your time.',
+    metadata: {
+      title: 'How to Live an Asymmetric Life',
+      author: 'Graham Weaver',
+      category: 'philosophy'
+    }
+  },
+  {
+    url: 'https://www.seancorc.com/writing/internal/random-tidbits',
+    startMarker: 'Health',
+    endMarker: 'COMPLACENT',
+    metadata: {
+      title: 'Random Tidbits',
+      author: 'Sean Corcoran',
+      category: 'misc'
+    }
+  },
+  {
+    url: 'https://www.seancorc.com/writing/internal/high-output-individual',
+    startMarker: 'How to be a high output individual',
+    endMarker: 'distractions.',
+    metadata: {
+      title: 'How To Be A High Output Individual',
+      author: 'Sean Corcoran',
+      category: 'career'
+    }
+  }
+];
+
+async function cleanText(text: string): Promise<string> {
+  return text
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&rsquo;/g, "'")
+    .replace(/&ldquo;/g, '"')
+    .replace(/&rdquo;/g, '"')
+    .replace(/&eacute;/g, 'é')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+async function checkExistingContent(url: string): Promise<boolean> {
+  const existing = await db
+    .select({ id: content.id })
+    .from(content)
+    .where(eq(content.url, url))
+    .limit(1);
+  
+  return existing.length > 0;
+}
+
+export async function scrapeWebpage(config: WebpageConfig): Promise<string> {
   try {
-    const response = await fetch('https://www.seancorc.com/writing/health-and-fitness');
+    const response = await fetch(config.url);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const html = await response.text();
+
+    const text = await response.text();
+    const startIndex = text.indexOf(config.startMarker);
+    const endIndex = text.indexOf(config.endMarker);
     
-    // Extract content between the first and last paragraph
-    const startMarker = "Cutting Through the Noise";
-    const endMarker = "Don't take things too seriously. We're just monkey people on a wet rock flying through space trying to figure it all out.";
+    if (startIndex === -1 || endIndex === -1) {
+      throw new Error(`Start or end marker not found in content for ${config.url}`);
+    }
     
-    let content = html.split(startMarker)[1].split(endMarker)[0];
-    content = startMarker + content + endMarker;
-    
-    // Clean up HTML entities and special characters
-    return content
-      .replace(/<[^>]*>/g, '') // Remove HTML tags
-      .replace(/&nbsp;/g, ' ') // Replace &nbsp; with space
-      .replace(/&amp;/g, '&') // Replace &amp; with &
-      .replace(/&rsquo;/g, "'") // Replace &rsquo; with '
-      .replace(/&ldquo;/g, '"') // Replace &ldquo; with "
-      .replace(/&rdquo;/g, '"') // Replace &rdquo; with "
-      .replace(/&eacute;/g, 'é') // Replace &eacute; with é
-      .replace(/&#39;/g, "'") // Replace &#39; with '
-      .replace(/&lt;/g, '<') // Replace &lt; with <
-      .replace(/&gt;/g, '>') // Replace &gt; with >
-      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-      .replace(/\(self\.__next.*$/, '') // Remove Next.js script content
-      .trim();
+    const content = text.slice(
+      startIndex,
+      endIndex + config.endMarker.length
+    );
+
+    return cleanText(content);
   } catch (error) {
-    console.error('Error scraping article:', error);
+    console.error(`Error scraping webpage ${config.url}:`, error);
     throw error;
   }
 }
 
-async function main() {
+async function processArticle(config: WebpageConfig) {
   try {
-    // 1. Scrape the content
-    console.log('Scraping article...');
-    const articleContent = await scrapeArticle();
+    console.log(`\nProcessing article: ${config.metadata?.title}`);
     
-    // 2. Insert the content
+    // Check if content already exists
+    const exists = await checkExistingContent(config.url);
+    if (exists) {
+      console.log(`Skipping article: Content from ${config.url} already exists in database`);
+      return true;
+    }
+    
+    console.log('Scraping webpage...');
+    const scrapedContent = await scrapeWebpage(config);
+    
+    // Insert the content
     const [insertedContent] = await db
       .insert(content)
       .values({
-        text_data: articleContent,
-        url: 'https://www.seancorc.com/writing/health-and-fitness'
+        text_data: scrapedContent,
+        url: config.url,
+        source_type: 'webpage',
+        metadata: config.metadata
       })
       .returning();
 
     console.log('Content inserted with ID:', insertedContent.id);
 
-    // 3. Generate embeddings for the content
-    const chunks = await generateEmbeddings(articleContent);
+    // Generate embeddings for the content
+    const chunks = await generateEmbeddings(scrapedContent, config.url, config.metadata?.title || '');
     console.log(`Generated ${chunks.length} chunks with embeddings`);
 
-    // 4. Insert embeddings with metadata
+    // Insert embeddings with metadata
     for (const chunk of chunks) {
       await db.insert(embeddings).values({
         contentId: insertedContent.id,
@@ -74,10 +197,45 @@ async function main() {
       });
     }
 
-    console.log('Successfully generated and stored embeddings');
-    process.exit(0);
+    console.log('Successfully processed article');
+    return true;
   } catch (error) {
-    console.error('Error:', error);
+    console.error(`Failed to process article ${config.url}:`, error);
+    return false;
+  }
+}
+
+async function main() {
+  try {
+    console.log('Starting article processing...');
+    let successCount = 0;
+    let failureCount = 0;
+    let skippedCount = 0;
+
+    for (const article of ARTICLES) {
+      const exists = await checkExistingContent(article.url);
+      if (exists) {
+        console.log(`\nSkipping article: ${article.metadata?.title} - Already exists in database`);
+        skippedCount++;
+        continue;
+      }
+
+      const success = await processArticle(article);
+      if (success) {
+        successCount++;
+      } else {
+        failureCount++;
+      }
+    }
+
+    console.log('\nProcessing complete!');
+    console.log(`Successfully processed: ${successCount} articles`);
+    console.log(`Failed to process: ${failureCount} articles`);
+    console.log(`Skipped (already exists): ${skippedCount} articles`);
+    
+    process.exit(failureCount > 0 ? 1 : 0);
+  } catch (error) {
+    console.error('Fatal error:', error);
     process.exit(1);
   }
 }
