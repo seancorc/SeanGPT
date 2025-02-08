@@ -19,6 +19,16 @@ interface WebpageConfig {
 
 const ARTICLES: WebpageConfig[] = [
   {
+    url: 'https://www.seancorc.com/',
+    startMarker: 'Cornell',
+    endMarker: 'love music',
+    metadata: {
+      title: 'seancorc.com Homepage',
+      author: 'Sean Corcoran',
+      category: 'personal'
+    }
+  },
+  {
     url: 'https://www.seancorc.com/writing/alcolyte-lessons',
     startMarker: 'For context - This message was sent out',
     endMarker: '424-634-9101',

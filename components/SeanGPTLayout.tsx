@@ -62,10 +62,23 @@ export default function SeanGPTLayout() {
             className="max-w-3xl mx-auto px-4 pt-24"
           >
             <motion.h2 
-              className="text-lg md:text-2xl font-semibold mb-8 text-gray-700 text-center"
+              className="text-lg md:text-2xl font-semibold mb-4 text-gray-700 text-center"
             >
               Sean but ~AI~
             </motion.h2>
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg mb-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="min-w-0">
+                    <p className="text-sm text-amber-800 font-medium">
+                      ⚠️ Notice
+                    </p>
+                    <p className="mt-1 text-sm text-amber-700">
+                      This was primarily a learning project and is no longer being maintained. The behavior of the AI may be undefined or inconsistent. Feel free to explore, but please note this is not an active service.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
             <div className="space-y-6 text-gray-600 mb-8">
               <p className="text-center">
                 Click <a href="https://www.seancorc.com/" target="_blank" className="text-blue-600 hover:underline">here</a> for more info on what Sean is.
@@ -93,9 +106,10 @@ export default function SeanGPTLayout() {
             </div>
 
             <div className="space-y-6 text-gray-600 mb-12">
-            <p className="leading-relaxed">
+              <p className="leading-relaxed">
                 <i>Why?</i> To learn & because I'm curious to see how good of a proxy for me I can make this GPT (lowkey bars 🙂‍↕️). Maybe it'd be valuable for elite coaches & people that can demand a premium on their time too but that is yet to be seen.
               </p>
+
               <p className="leading-relaxed">
                 <i>How is this any different than ChatGPT?</i> In short, SeanGPT has a bunch of data & training on me that ChatGPT doesn't. I've given SeanGPT access to a bunch of my own writing & a set of hand selected articles/content that reflect my thinking. I'm currently training it to
                 talk like me. We'll see how far I can take it lol
