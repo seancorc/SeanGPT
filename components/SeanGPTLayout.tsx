@@ -73,7 +73,7 @@ export default function SeanGPTLayout() {
                       ⚠️ Notice
                     </p>
                     <p className="mt-1 text-sm text-amber-700">
-                      This was primarily a learning project and is no longer being maintained. The behavior of the AI may be undefined or inconsistent. Feel free to explore, but please note this is not an active service.
+                      This is no longer being maintained and probably does not work anymore because the database provider retires the db after a period of low activity.
                     </p>
                   </div>
                 </div>
